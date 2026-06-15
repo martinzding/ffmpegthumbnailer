@@ -52,6 +52,7 @@ int main(int argc, char** argv)
     bool maintainAspectRatio    = true;
     bool smartFrameSelection    = false;
     bool preferEmbeddedMetadata = false;
+    bool centerCrop             = false;
     std::string inputFile;
     std::string outputFile;
     std::string imageFormat;
@@ -60,7 +61,7 @@ int main(int argc, char** argv)
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpm")) != -1) {
+    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpmn")) != -1) {
         switch (option) {
         case 'a':
             maintainAspectRatio = false;
@@ -109,6 +110,9 @@ int main(int argc, char** argv)
         case 'c':
             imageFormat = optarg;
             break;
+        case 'n':
+            centerCrop = true;
+            break;
         case 'h':
             printUsage();
             return 0;
@@ -141,7 +145,7 @@ int main(int argc, char** argv)
         ThumbnailerImageType imageType = imageFormat.empty() ? determineImageTypeFromFilename(outputFile)
                                                              : determineImageTypeFromString(imageFormat);
 
-        VideoThumbnailer videoThumbnailer(0, workaroundIssues, maintainAspectRatio, imageQuality, smartFrameSelection);
+        VideoThumbnailer videoThumbnailer(0, workaroundIssues, maintainAspectRatio, centerCrop, imageQuality, smartFrameSelection);
         videoThumbnailer.setThumbnailSize(thumbnailSize);
         videoThumbnailer.setLogCallback([](ThumbnailerLogLevel lvl, const std::string& msg) {
             std::cerr << msg << std::endl;
@@ -196,7 +200,8 @@ void printUsage()
               << "  -m      : prefer embedded image metadata over video content\n"
               << "  -w      : workaround issues in old versions of ffmpeg\n"
               << "  -v      : print version number\n"
-              << "  -h      : display this help\n";
+              << "  -h      : display this help\n"
+              << "  -n      : crop to center\n";
 }
 
 ThumbnailerImageType determineImageTypeFromString(const std::string& type)

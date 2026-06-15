@@ -49,7 +49,7 @@ public:
     std::string getCodec();
     void seek(int timeInSeconds);
     void decodeVideoFrame();
-    void getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame);
+    void getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, bool centerCrop, VideoFrame& videoFrame);
 
     int getWidth();
     int getHeight();
@@ -64,7 +64,7 @@ private:
     int32_t findPreferredVideoStream(bool preferEmbeddedMetadata);
 
     void initializeVideo(bool preferEmbeddedMetadata);
-    void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio);
+    void initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio, bool centerCrop);
 
     bool decodeVideoPacket();
     bool getVideoPacket();

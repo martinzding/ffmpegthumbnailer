@@ -47,7 +47,7 @@ class VideoThumbnailer
 {
 public:
     VideoThumbnailer();
-    VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection);
+    VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, bool centerCrop, int imageQuality, bool smartFrameSelection);
 
     VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = nullptr);
     VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = nullptr);
@@ -60,6 +60,7 @@ public:
     void setWorkAroundIssues(bool workAround);
     void setImageQuality(int imageQuality);
     void setMaintainAspectRatio(bool enabled);
+    void setCenterCrop(bool enabled);
     void setPreferEmbeddedMetadata(bool enabled);
     void setSmartFrameSelection(bool enabled);
     void addFilter(IFilter* pFilter);
@@ -87,6 +88,7 @@ private:
     bool m_WorkAroundIssues;
     int m_ImageQuality;
     bool m_MaintainAspectRatio;
+    bool m_CenterCrop;
     bool m_SmartFrameSelection;
     bool m_PreferEmbeddedMetadata;
     std::string m_SeekTime;

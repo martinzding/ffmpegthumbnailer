@@ -40,6 +40,7 @@ typedef struct video_thumbnailer_struct
     ThumbnailerImageType thumbnail_image_type;                                          /* default = Png */
     struct AVFormatContext* av_format_context;                                          /* default = NULL */
     int maintain_aspect_ratio;                                                          /* default = 1 */
+    int center_crop;                                                                    /* default = 0 */
     int prefer_embedded_metadata;                                                       /* default = 0 */
 
     struct thumbnailer_data* tdata; /* for internal use only */
