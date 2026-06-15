@@ -71,6 +71,9 @@ void video_thumbnailer_destroy_image_data(image_data* data);
 int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer* thumbnailer, const char* movie_filename, image_data* generated_image_data);
 /* generate thumbnail from video file (movie_filename), image is written to output_fileName on disk*/
 int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName);
+/* an overload that passes video duration back to caller */
+int video_thumbnailer_generate_thumbnail_to_file_duration(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName, int* duration);
+
 /* install a logging callback that gets called on errors and informational messages, reset by passing NULL.
    by default no logging is generated on stdout or stderr */
 void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnailer_log_callback cb);

@@ -49,7 +49,7 @@ public:
     VideoThumbnailer();
     VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, bool centerCrop, int imageQuality, bool smartFrameSelection);
 
-    VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = nullptr);
+    VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, const std::string& outputFile, AVFormatContext* pAvContext = nullptr, int* duration = nullptr);
     VideoFrameInfo generateThumbnail(const std::string& videoFile, ThumbnailerImageType type, std::vector<uint8_t>& buffer, AVFormatContext* pAvContext = nullptr);
 
     void setThumbnailSize(int size);
@@ -70,7 +70,7 @@ public:
     void setLogCallback(std::function<void(ThumbnailerLogLevel, const std::string&)> cb);
 
 private:
-    VideoFrameInfo generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr);
+    VideoFrameInfo generateThumbnail(const std::string& videoFile, ImageWriter& imageWriter, AVFormatContext* pAvContext = nullptr, int* duration = nullptr);
     void generateSmartThumbnail(MovieDecoder& movieDecoder, VideoFrame& videoFrame);
     void writeImage(const std::string& videoFile, ImageWriter& imageWriter, const VideoFrame& videoFrame, int duration, std::vector<uint8_t*>& rowPointers);
 

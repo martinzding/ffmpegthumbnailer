@@ -167,7 +167,9 @@ int main(int argc, char** argv)
             videoThumbnailer.setSeekPercentage(seekPercentage);
         }
 
-        videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile);
+        int duration = 0;
+        videoThumbnailer.generateThumbnail(inputFile, imageType, outputFile, nullptr, &duration);
+        std::cout << "Video duration: " << duration << " seconds" << std::endl;
     } catch (std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return -1;
