@@ -31,6 +31,9 @@
 #include "libffmpegthumbnailer/filmstripfilter.h"
 #include "libffmpegthumbnailer/stringoperations.h"
 #include "libffmpegthumbnailer/videothumbnailer.h"
+extern "C" {
+#include "libffmpegthumbnailer/videothumbnailerc.h"
+}
 
 using namespace ffmpegthumbnailer;
 
@@ -61,7 +64,7 @@ int main(int argc, char** argv)
         std::cerr << "Failed to set locale" << std::endl;
     }
 
-    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpmn")) != -1) {
+    while ((option = getopt(argc, argv, "i:o:s:t:q:c:r:afwhvpmnu")) != -1) {
         switch (option) {
         case 'a':
             maintainAspectRatio = false;
@@ -119,6 +122,9 @@ int main(int argc, char** argv)
         case 'v':
             printVersion();
             return 0;
+        case 'u':
+            video_thumbnailer_mute_libav_logs();
+            break;
         case '?':
         default:
             std::cerr << "invalid arguments" << std::endl;

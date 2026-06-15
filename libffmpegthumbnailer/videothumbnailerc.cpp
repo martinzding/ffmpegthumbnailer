@@ -21,6 +21,10 @@
 #include <stdexcept>
 #include <vector>
 
+extern "C" {
+#include <libavutil/log.h>
+}
+
 using namespace ffmpegthumbnailer;
 
 struct thumbnailer_data
@@ -181,4 +185,9 @@ extern "C" int video_thumbnailer_set_size(video_thumbnailer* thumbnailer, int wi
         trace_message(thumbnailer, ThumbnailerLogLevelError, e.what());
         return -1;
     }
+}
+
+extern "C" void video_thumbnailer_mute_libav_logs()
+{
+    av_log_set_level(AV_LOG_QUIET);
 }
