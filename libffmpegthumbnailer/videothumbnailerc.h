@@ -83,6 +83,9 @@ void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnai
    e.g. Calling this function with 0 and 100 as arguments will set the width using the video aspect ratio */
 int video_thumbnailer_set_size(video_thumbnailer* thumbnailer, int width, int height);
 
+/* Added to silence libav warnings globally */
+void video_thumbnailer_mute_libav_logs();
+
 #ifdef __cplusplus
 }
 #endif

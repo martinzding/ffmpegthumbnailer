@@ -24,3 +24,7 @@ Available command line arguments:
   * -w: workaround some issues in older versions of ffmpeg (only use if you experience problems like 100% cpu usage on certain files)
   * -v: print version number
   * -h: display the usage
+
+Additional arguments in this fork:
+  * -n: crop to center
+  * -u: disable libav logs

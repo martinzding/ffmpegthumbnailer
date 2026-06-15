@@ -324,10 +324,13 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
     assert(m_pFilterGraph);
 
     std::stringstream ss;
+    // https://ffmpeg.org/ffmpeg-filters.html#buffer
     ss << "video_size=" << m_pVideoCodecContext->width << "x" << m_pVideoCodecContext->height
        << ":pix_fmt=" << m_pVideoCodecContext->pix_fmt
        << ":time_base=" << timeBase.num << "/" << timeBase.den
-       << ":pixel_aspect=" << m_pVideoCodecContext->sample_aspect_ratio.num << "/" << FFMAX(m_pVideoCodecContext->sample_aspect_ratio.den, 1);
+       << ":pixel_aspect=" << m_pVideoCodecContext->sample_aspect_ratio.num << "/" << FFMAX(m_pVideoCodecContext->sample_aspect_ratio.den, 1)
+       << ":colorspace=" << m_pVideoStream->codecpar->color_space
+       << ":range=" << m_pVideoStream->codecpar->color_range;
 
     checkRc(avfilter_graph_create_filter(&m_pFilterSource, avfilter_get_by_name("buffer"), "thumb_buffer", ss.str().c_str(), nullptr, m_pFilterGraph),
             "Failed to create filter source");
