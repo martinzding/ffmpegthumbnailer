@@ -136,18 +136,23 @@ extern "C" int video_thumbnailer_generate_thumbnail_to_buffer(video_thumbnailer*
     return 0;
 }
 
-extern "C" int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
+extern "C" int video_thumbnailer_generate_thumbnail_to_file_duration(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName, int* duration)
 {
     try {
         auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
         setProperties(thumbnailer);
-        videoThumbnailer.generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context);
+        videoThumbnailer.generateThumbnail(movie_filename, thumbnailer->thumbnail_image_type, output_fileName, thumbnailer->av_format_context, duration);
     } catch (const std::exception& e) {
         trace_message(thumbnailer, ThumbnailerLogLevelError, e.what());
         return -1;
     }
 
     return 0;
+}
+
+extern "C" int video_thumbnailer_generate_thumbnail_to_file(video_thumbnailer* thumbnailer, const char* movie_filename, const char* output_fileName)
+{
+    return video_thumbnailer_generate_thumbnail_to_file_duration(thumbnailer, movie_filename, output_fileName, nullptr);
 }
 
 extern "C" void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnailer_log_callback cb)
