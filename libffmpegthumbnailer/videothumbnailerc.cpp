@@ -49,6 +49,7 @@ extern "C" video_thumbnailer* video_thumbnailer_create(void)
     thumbnailer->thumbnail_image_quality  = 8;
     thumbnailer->thumbnail_image_type     = Png;
     thumbnailer->maintain_aspect_ratio    = 1;
+    thumbnailer->center_crop              = 0;
     thumbnailer->prefer_embedded_metadata = 0;
     thumbnailer->av_format_context        = nullptr;
     thumbnailer->tdata                    = new thumbnailer_data();
@@ -100,6 +101,7 @@ static void setProperties(video_thumbnailer* thumbnailer)
     videoThumbnailer.setWorkAroundIssues(thumbnailer->workaround_bugs != 0);
     videoThumbnailer.setImageQuality(thumbnailer->thumbnail_image_quality);
     videoThumbnailer.setMaintainAspectRatio(thumbnailer->maintain_aspect_ratio != 0);
+    videoThumbnailer.setCenterCrop(thumbnailer->center_crop);
     videoThumbnailer.setPreferEmbeddedMetadata(thumbnailer->prefer_embedded_metadata != 0);
 
     if (thumbnailer->overlay_film_strip) {

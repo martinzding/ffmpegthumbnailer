@@ -55,12 +55,13 @@ VideoThumbnailer::VideoThumbnailer()
 {
 }
 
-VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, int imageQuality, bool smartFrameSelection)
+VideoThumbnailer::VideoThumbnailer(int thumbnailSize, bool workaroundIssues, bool maintainAspectRatio, bool centerCrop, int imageQuality, bool smartFrameSelection)
 : m_ThumbnailSize(std::to_string(thumbnailSize))
 , m_SeekPercentage(10)
 , m_WorkAroundIssues(workaroundIssues)
 , m_ImageQuality(imageQuality)
 , m_MaintainAspectRatio(maintainAspectRatio)
+, m_CenterCrop(centerCrop)
 , m_SmartFrameSelection(smartFrameSelection)
 , m_PreferEmbeddedMetadata(false)
 {
@@ -131,6 +132,11 @@ void VideoThumbnailer::setMaintainAspectRatio(bool enabled)
     m_MaintainAspectRatio = enabled;
 }
 
+void VideoThumbnailer::setCenterCrop(bool enabled)
+{
+    m_CenterCrop = enabled;
+}
+
 void VideoThumbnailer::setPreferEmbeddedMetadata(bool enabled)
 {
     m_PreferEmbeddedMetadata = enabled;
@@ -181,7 +187,7 @@ VideoFrameInfo VideoThumbnailer::generateThumbnail(const string& videoFile, Imag
             generateThumbnail(videoFile, imageWriter, pAvContext);
         }
     } else {
-        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrame);
+        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, m_CenterCrop, videoFrame);
     }
 
     applyFilters(videoFrame);
@@ -208,7 +214,7 @@ void VideoThumbnailer::generateSmartThumbnail(MovieDecoder& movieDecoder, VideoF
 
     for (int i = 0; i < SMART_FRAME_ATTEMPTS; ++i) {
         movieDecoder.decodeVideoFrame();
-        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, videoFrames[i]);
+        movieDecoder.getScaledVideoFrame(m_ThumbnailSize, m_MaintainAspectRatio, m_CenterCrop, videoFrames[i]);
         utils::generateHistogram(videoFrames[i], histograms[i]);
     }
 

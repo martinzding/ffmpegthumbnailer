@@ -318,7 +318,7 @@ std::string MovieDecoder::createScaleString(const std::string& sizeString, bool 
     return scale.str();
 }
 
-void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio)
+void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::string& size, bool maintainAspectRatio, bool centerCrop)
 {
     m_pFilterGraph = avfilter_graph_alloc();
     assert(m_pFilterGraph);
@@ -338,6 +338,15 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
     if (m_pFrame->flags & AV_FRAME_FLAG_INTERLACED) {
         checkRc(avfilter_graph_create_filter(&yadifFilter, avfilter_get_by_name("yadif"), "thumb_deint", "deint=1", nullptr, m_pFilterGraph),
                 "Failed to create deinterlace filter");
+    }
+
+    AVFilterContext* cropFilter = nullptr;
+    if (centerCrop) {
+        std::stringstream crop_ss;
+        int shortSide = std::min(m_pVideoCodecContext->width, m_pVideoCodecContext->height);
+        crop_ss << "w=" << shortSide << ":h=" << shortSide;
+        checkRc(avfilter_graph_create_filter(&cropFilter, avfilter_get_by_name("crop"), "thumb_crop", crop_ss.str().c_str(), nullptr, m_pFilterGraph),
+                "Failed to create crop filter");
     }
 
     AVFilterContext* scaleFilter = nullptr;
@@ -366,11 +375,18 @@ void MovieDecoder::initializeFilterGraph(const AVRational& timeBase, const std::
 
     checkRc(avfilter_link(scaleFilter, 0, formatFilter, 0), "Failed to link scale filter");
 
-    if (yadifFilter) {
-        checkRc(avfilter_link(yadifFilter, 0, scaleFilter, 0), "Failed to link yadif filter");
+    AVFilterContext* nextFilter = scaleFilter;
+    if (cropFilter) {
+        checkRc(avfilter_link(cropFilter, 0, nextFilter, 0), "Failed to link crop filter");
+        nextFilter = cropFilter;
     }
 
-    checkRc(avfilter_link(m_pFilterSource, 0, yadifFilter ? yadifFilter : scaleFilter, 0), "Failed to link source filter");
+    if (yadifFilter) {
+        checkRc(avfilter_link(yadifFilter, 0, nextFilter, 0), "Failed to link yadif filter");
+        nextFilter = yadifFilter;
+    }
+
+    checkRc(avfilter_link(m_pFilterSource, 0, nextFilter, 0), "Failed to link source filter");
     checkRc(avfilter_graph_config(m_pFilterGraph, nullptr), "Failed to configure filter graph");
 }
 
@@ -508,9 +524,9 @@ bool MovieDecoder::getVideoPacket()
     return frameDecoded;
 }
 
-void MovieDecoder::getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, VideoFrame& videoFrame)
+void MovieDecoder::getScaledVideoFrame(const std::string& scaledSize, bool maintainAspectRatio, bool centerCrop, VideoFrame& videoFrame)
 {
-    initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio);
+    initializeFilterGraph(m_pFormatContext->streams[m_VideoStream]->time_base, scaledSize, maintainAspectRatio, centerCrop);
 
     auto del = [](AVFrame* f) { av_frame_free(&f); };
     std::unique_ptr<AVFrame, decltype(del)> res(av_frame_alloc(), del);
